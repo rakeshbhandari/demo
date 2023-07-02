@@ -66,7 +66,7 @@ class TempleAdapter extends TypeAdapter<Item> {
       name: reader.readString(),
       address: reader.readString(),
       shortDescription: reader.readString(),
-      description: reader.readString(),
+      // description: reader.readString(),
       phone: reader.readString(),
       priest: reader.readString(), 
       districtId: reader.readInt(),
