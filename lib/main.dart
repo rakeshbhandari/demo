@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,8 +10,6 @@ void main() async {
   await Hive.openBox<Item>('templeData');
   runApp(MyApp());
 }
-
-
 
 class Item {
   String id;
@@ -53,8 +49,6 @@ class Item {
   }
 }
 
-
-
 class TempleAdapter extends TypeAdapter<Item> {
   @override
   final int typeId = 0;
@@ -68,10 +62,10 @@ class TempleAdapter extends TypeAdapter<Item> {
       shortDescription: reader.readString(),
       // description: reader.readString(),
       phone: reader.readString(),
-      priest: reader.readString(), 
+      priest: reader.readString(),
       districtId: reader.readInt(),
-       municipalityId: reader.readInt(), 
-       stateId: reader.readInt(),
+      municipalityId: reader.readInt(),
+      stateId: reader.readInt(),
     );
   }
 
@@ -87,7 +81,6 @@ class TempleAdapter extends TypeAdapter<Item> {
     writer.writeInt(obj.districtId);
     writer.writeInt(obj.municipalityId);
     writer.writeInt(obj.stateId);
-
   }
 }
 
@@ -116,30 +109,22 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _templeBox = Hive.box<Item>('templeData');
-    fetchDataFromApi();
+    // fetchDataFromApi();
   }
 
   Future<void> fetchDataFromApi() async {
     final response = await http.get(Uri.parse(
         'http://103.90.86.54:1010/api/services/app/Android/GetAllTemples'));
     if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.toString()) ["result"] ["items"];
-      // final demo = Item.fromJson(jsonData);
-      // final temples = demo.map((Item) => Item(
-      //           id: Item.id,
-      //           name: Item.name,
-      //           address: Item.address,
-      //           shortDescription: Item.shortDescription,
-      //           // description: item.description,
-      //           phone: Item.phone,
-      //           priest: Item.priest,
-      //         ))
-      //     .toList();
-      // _templeBox?.clear();
-      // _templeBox?.addAll(temples);
-      setState(() {
+      final data = jsonDecode(response.body);
+      final List<dynamic> items = data['result']['items'];
 
-      }); // Update the UI after fetching data
+      //save instances to hive
+      for (var item in items) {
+        _templeBox?.add(Item.fromJson(item));
+      }
+
+      setState(() {});
     } else {
       print('Request failed with status: ${response.statusCode}.');
     }
@@ -154,24 +139,33 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text('Hive Flutter Demo'),
       ),
       body: Center(
-        // child: temples != null
-        //     ? ListView.builder(
-        //         itemCount: temples.length,
-        //         itemBuilder: (context, index) {
-        //           final temple = temples[index];
-        //           return ListTile(
-        //             title: Text(temple.name),
-        //             subtitle: Text(temple.address),
-        //             trailing: Icon(Icons.arrow_forward),
-        //             onTap: () {
-        //               // Handle onTap event
-        //             },
-        //           );
-        //         },
-        //       ) 
-        Child(
-
-        ),
+        child: temples != null
+            ? Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      fetchDataFromApi();
+                      // _templeBox?.clear();
+                    },
+                    child: Text('Test'),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: temples.length,
+                    itemBuilder: (context, index) {
+                      final temple = temples[index];
+                      return ListTile(
+                        title: Text(temple.name),
+                        subtitle: Text(temple.address),
+                        trailing: Icon(Icons.arrow_forward),
+                        onTap: () {
+                          // Handle onTap event
+                        },
+                      );
+                    },
+                  ),
+                ],
+              )
             : const CircularProgressIndicator(),
       ),
     );
