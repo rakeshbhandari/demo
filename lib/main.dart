@@ -66,7 +66,7 @@ class TempleAdapter extends TypeAdapter<Item> {
       name: reader.readString(),
       address: reader.readString(),
       shortDescription: reader.readString(),
-      // description: reader.readString(),
+      description: reader.readString(),
       phone: reader.readString(),
       priest: reader.readString(), 
       districtId: reader.readInt(),
@@ -124,20 +124,22 @@ class _MyHomePageState extends State<MyHomePage> {
         'http://103.90.86.54:1010/api/services/app/Android/GetAllTemples'));
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.toString()) ["result"] ["items"];
-      final demo = Item.fromJson(jsonData);
-      final temples = demo.map((Item) => Item(
-                id: Item.id,
-                name: Item.name,
-                address: Item.address,
-                shortDescription: Item.shortDescription,
-                // description: item.description,
-                phone: Item.phone,
-                priest: Item.priest,
-              ))
-          .toList();
-      _templeBox?.clear();
-      _templeBox?.addAll(temples);
-      setState(() {}); // Update the UI after fetching data
+      // final demo = Item.fromJson(jsonData);
+      // final temples = demo.map((Item) => Item(
+      //           id: Item.id,
+      //           name: Item.name,
+      //           address: Item.address,
+      //           shortDescription: Item.shortDescription,
+      //           // description: item.description,
+      //           phone: Item.phone,
+      //           priest: Item.priest,
+      //         ))
+      //     .toList();
+      // _templeBox?.clear();
+      // _templeBox?.addAll(temples);
+      setState(() {
+
+      }); // Update the UI after fetching data
     } else {
       print('Request failed with status: ${response.statusCode}.');
     }
@@ -152,21 +154,24 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text('Hive Flutter Demo'),
       ),
       body: Center(
-        child: temples != null
-            ? ListView.builder(
-                itemCount: temples.length,
-                itemBuilder: (context, index) {
-                  final temple = temples[index];
-                  return ListTile(
-                    title: Text(temple.name),
-                    subtitle: Text(temple.address),
-                    trailing: Icon(Icons.arrow_forward),
-                    onTap: () {
-                      // Handle onTap event
-                    },
-                  );
-                },
-              )
+        // child: temples != null
+        //     ? ListView.builder(
+        //         itemCount: temples.length,
+        //         itemBuilder: (context, index) {
+        //           final temple = temples[index];
+        //           return ListTile(
+        //             title: Text(temple.name),
+        //             subtitle: Text(temple.address),
+        //             trailing: Icon(Icons.arrow_forward),
+        //             onTap: () {
+        //               // Handle onTap event
+        //             },
+        //           );
+        //         },
+        //       ) 
+        Child(
+
+        ),
             : const CircularProgressIndicator(),
       ),
     );
